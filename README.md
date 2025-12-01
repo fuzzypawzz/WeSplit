@@ -1,4 +1,4 @@
 # WeSplit - an iOS app to split restaurant bills between friends.
 
-![App Screenshot](.github/images/app-screen.png)
+<img src=".github/images/app-screen.png" alt="App Screenshot" width="300">
 
