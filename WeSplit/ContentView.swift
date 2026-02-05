@@ -41,6 +41,7 @@ struct ContentView: View {
               Text("\(i) \(vm.contentFor["PeoplePickerItemLabel", default: "people"])")
             }
           }
+          .accessibilityIdentifier("peoplePicker")
         }
         
         Section(
@@ -52,6 +53,7 @@ struct ContentView: View {
           ) {
             ForEach(vm.tipPercentences, id: \.self) { percentage in
               Text(percentage, format: .percent)
+                .accessibilityIdentifier("tip_\(percentage)")
             }
           }
           .pickerStyle(.segmented)
@@ -61,12 +63,14 @@ struct ContentView: View {
           vm.contentFor["TotalAmountHeading", default: "Total"]
         ) {
           Text(vm.grandTotal, format: .currency(code: vm.currencyCode))
+            .accessibilityIdentifier("totalAmount")
         }
-        
+
         Section(
           vm.contentFor["SummaryHeading", default: "Per person:"]
         ) {
           Text(vm.amountEachPersonHasToPay, format: .currency(code: vm.currencyCode))
+            .accessibilityIdentifier("perPersonAmount")
         }
       }
       .navigationTitle(vm.appName)
