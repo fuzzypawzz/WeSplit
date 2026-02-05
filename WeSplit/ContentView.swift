@@ -8,67 +8,24 @@
 import SwiftUI
 
 struct ContentView: View {
-  @State private var checkAmount = 0.0
-  @State private var numberOfPeople = 2
-  @State private var tipPercent = 20
+  @State private var vm = ContentViewModel()
   @FocusState private var amountIsFocused: Bool
-  
-  private struct AppData {
-    static var appName = "WeSplit 💳"
-  }
-  
-  private let tipPercentences = [10, 15, 20, 25, 0]
-  
-  private let contentFor = [
-    "SubTitle": "Split the bill between your friends.",
-    "AmountLabel": "Bill amount",
-    "PeoplePickerLabel": "Split between",
-    "PeoplePickerItemLabel": "persons",
-    "TipPercentageHeading": "Did you leave a tip?",
-    "TipPercentagePickerLabel": "Tip percentage",
-    "TotalAmountHeading": "Total paid:",
-    "SummaryHeading": "Each person should pay:"
-  ]
-  
-  private let currencyCode = Locale.current.currency?.identifier ?? "DKK"
-  
-  private var grandTotal: Double {
-    let selectedTip = Double(tipPercent)
-    let tipValue = checkAmount / 100 * selectedTip
-    
-    return checkAmount + tipValue
-  }
-  
-  private var isClearButtonShown: Bool {
-    checkAmount != 0.0
-  }
-  
-  private func clearCheckAmount() {
-    checkAmount = 0.0
-  }
-  
-  private var amountEachPersonHasToPay: Double {
-    // the picker list starts from 2
-    let peopleCount = Double(numberOfPeople + 2)
-    
-    return grandTotal / peopleCount
-  }
-  
+
   var body: some View {
     NavigationStack {
       Form {
         Section {
           HStack {
             TextField(
-              contentFor["AmountLabel", default: "Amount"],
-              value: $checkAmount,
-              format: .currency(code: currencyCode)
+              vm.contentFor["AmountLabel", default: "Amount"],
+              value: $vm.checkAmount,
+              format: .currency(code: vm.currencyCode)
             )
             .keyboardType(.decimalPad)
             .focused($amountIsFocused)
             
-            if isClearButtonShown {
-              Button(action: clearCheckAmount) {
+            if vm.isClearButtonShown {
+              Button(action: vm.clearCheckAmount) {
                 Image(systemName: "xmark.circle.fill")
                   .foregroundColor(.red)
               }
@@ -77,23 +34,23 @@ struct ContentView: View {
           }
           
           Picker(
-            contentFor["PeoplePickerLabel", default: "People"],
-            selection: $numberOfPeople
+            vm.contentFor["PeoplePickerLabel", default: "People"],
+            selection: $vm.numberOfPeople
           ) {
             ForEach(2..<100) { i in
-              Text("\(i) \(contentFor["PeoplePickerItemLabel", default: "people"])")
+              Text("\(i) \(vm.contentFor["PeoplePickerItemLabel", default: "people"])")
             }
           }
         }
         
         Section(
-          contentFor["TipPercentageHeading", default: "Tip"]
+          vm.contentFor["TipPercentageHeading", default: "Tip"]
         ) {
           Picker(
-            contentFor["TipPercentagePickerLabel", default: "Tip"],
-            selection: $tipPercent
+            vm.contentFor["TipPercentagePickerLabel", default: "Tip"],
+            selection: $vm.tipPercent
           ) {
-            ForEach(tipPercentences, id: \.self) { percentage in
+            ForEach(vm.tipPercentences, id: \.self) { percentage in
               Text(percentage, format: .percent)
             }
           }
@@ -101,20 +58,20 @@ struct ContentView: View {
         }
         
         Section(
-          contentFor["TotalAmountHeading", default: "Total"]
+          vm.contentFor["TotalAmountHeading", default: "Total"]
         ) {
-          Text(grandTotal, format: .currency(code: currencyCode))
+          Text(vm.grandTotal, format: .currency(code: vm.currencyCode))
         }
         
         Section(
-          contentFor["SummaryHeading", default: "Per person:"]
+          vm.contentFor["SummaryHeading", default: "Per person:"]
         ) {
-          Text(amountEachPersonHasToPay, format: .currency(code: currencyCode))
+          Text(vm.amountEachPersonHasToPay, format: .currency(code: vm.currencyCode))
         }
       }
-      .navigationTitle(AppData.appName)
+      .navigationTitle(vm.appName)
       
-      .navigationSubtitle(contentFor["SubTitle", default: ""])
+      .navigationSubtitle(vm.contentFor["SubTitle", default: ""])
       
       .toolbar {
         if amountIsFocused {
